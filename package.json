@@ -1,0 +1,26 @@
+{
+  "name": "css2sass",
+  "version": "1.0.0",
+  "description": "css to sass converter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chacaa/CSS2SASS.git"
+  },
+  "author": "chacaa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chacaa/CSS2SASS/issues"
+  },
+  "homepage": "https://github.com/chacaa/CSS2SASS#readme",
+  "dependencies": {
+    "@rgrove/parse-xml": "^1.1.1",
+    "css-tree": "^1.0.0-alpha.27",
+    "csstree-validator": "^1.3.0",
+    "express": "^4.16.2"
+  }
+}
