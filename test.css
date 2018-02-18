@@ -1,9 +1,11 @@
 body {
     background-color: powderblue;
+    color: blue; /*hola*/
 }
 h1 {
     color: blue;
 }
+/*hola*/
 p {
     color: red;
 }
