@@ -1,11 +1,11 @@
-body {
+.body {
     background-color: powderblue;
     color: blue; /*hola*/
 }
-h1 {
+.h1 {
     color: blue;
 }
 /*hola*/
-p {
+.p {
     color: red;
 }
