@@ -46,8 +46,37 @@ function generateVariables(parsedCSS, allValuesAsVariables) {
     return variables;
 }
 
+function iterateOverTheAttributes(attributes, variables, numOfIndentation) {
+    var indentation = generateIndentation(numOfIndentation);
+    for (var j=0; j< attributes.length; j++) {
+        if (attributes[j].type === 'decl') {
+            var replaced = false;
+            for(var m=0; m<variables.length; m++) {
+                if (variables[m][1] == attributes[j].value) {
+                    console.log(indentation + attributes[j].prop + ': ' + variables[m][0]);
+                    replaced = true;
+                    break;
+                }
+            }
+
+            if (!replaced) {
+                console.log(indentation + attributes[j].prop + ': ' + attributes[j].value);
+            }
+        }
+    }
+}
+
+function generateIndentation(number) {
+    var indentation = '';
+    for (var i=0; i<number; i++) {
+        indentation += '\t';
+    }
+    return indentation;
+}
+
 function generateSASSFile(parsedCSS, allValuesAsVariables) {
     var variables = generateVariables(parsedCSS, allValuesAsVariables);
+    var numOfIndentation = 1;
     for (var k=0; k < variables.length; k++) {
         console.log(variables[k][0] + ' = ' + variables[k][1]);
     }
@@ -57,33 +86,40 @@ function generateSASSFile(parsedCSS, allValuesAsVariables) {
         if (nodes[i].type === 'comment') {
             console.log('/* ' + nodes[i].text + ' */');
         } else {
-            console.log(nodes[i].selector);
-            var attributes = nodes[i].nodes;
-            for (var j=0; j< attributes.length; j++) {
-                if (attributes[j].type === 'decl') {
-                    var next = j + 1;
-                    // if (next < attributes.length)
-                    var replaced = false;
-                    for(var m=0; m<variables.length; m++) {
-                        if (variables[m][1] == attributes[j].value) {
-                            console.log('\t' + attributes[j].prop + ': ' + variables[m][0]);
-                            replaced = true;
-                            break;
-                        }
+            var selector = nodes[i].selector;
+            var splitBySpace = selector.split(" ");
+            var splitByComma = selector.split(",");
+            if (splitBySpace.length > 1 || splitByComma > 1) {
+                if (splitBySpace.length > 1) {
+                    console.log(splitBySpace[0]);
+                    for (var j=1; j < splitBySpace.length; j++) {
+                        numOfIndentation ++;
+                        var indentation = generateIndentation(j);
+                        console.log(indentation+splitBySpace[j]);
                     }
-
-                    if (!replaced) {
-                        console.log('\t' + attributes[j].prop + ': ' + attributes[j].value);
-                    }
+                    var attributes = nodes[i].nodes;
+                    iterateOverTheAttributes(attributes, variables, numOfIndentation);
+                } else {
+                    //TODO
                 }
+            } else {
+                console.log(nodes[i].selector);
+                var attributes = nodes[i].nodes;
+                iterateOverTheAttributes(attributes, variables, numOfIndentation);
             }
         }
     }
 }
 
 var cssFile = fileManager.readFile(testFile);
+console.log("Archivo CSS:");
+console.log("============\n");
+console.log(cssFile);
+console.log("\n==================================================\n");
+console.log("Archivo SASS:")
+console.log("=============\n");
 var errorsDetected = errorManager.checkErrorsInCSSFile(testFile);
 if (!errorsDetected) {
     var parsedCSS = postcss.parse(cssFile);
-    generateSASSFile(parsedCSS, true);
+    generateSASSFile(parsedCSS, false);
 }
