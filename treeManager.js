@@ -2,6 +2,7 @@ module.exports = {
     generateSASSTree: function(parsedCSS, allValuesAsVariables) {
         const tree = [];
         const variables = generateVariables(parsedCSS, allValuesAsVariables);
+        const superClasses = generateSuperClasses(parsedCSS, variables);
         const nodes = parsedCSS.nodes;
 
         for (let i=0; i < nodes.length; i++) {
@@ -12,8 +13,8 @@ module.exports = {
                 const splitBySpace = selector.split(" ");
                 const splitByComma = selector.split(",");
 
-                if (splitBySpace.length > 1 || splitByComma > 1) {
-                    if (splitBySpace.length > 1) {
+                if (splitBySpace.length > 1 || splitByComma.length > 1) {
+                    if (splitBySpace.length > 1 && splitByComma.length == 1) {
                         const parentSelector = splitBySpace[0];
                         let childSelector = '';
 
@@ -33,7 +34,7 @@ module.exports = {
                             name: childSelector,
                             value: null,
                             children: childs
-                        }
+                        };
 
                         let alreadyDefined = false;
                         for (let j=0; j < tree.length; j++) {
@@ -46,22 +47,60 @@ module.exports = {
                             }
                         }
 
-                        if (!alreadyDefined) {
+                        if (!alreadyDefined ) {
                             pushNode(tree, 'rule', parentSelector, null, child);
                         }
-                    } else {
-                        //TODO
-                    }
+                    } 
                 } else {
                     const attributes = nodes[i].nodes;
                     const childs = generateChildren(attributes, variables, nodes);
+                    let extendsSupperClass = false;
+                    for (let j=0; j<superClasses.length; j++) {
+                        const superClass = superClasses[j];
 
-                    pushNode(tree, 'rule', selector, null, childs);
+                        for (let k=0; k<superClass.list.length; k++) {
+                            if (nodes[i].selector === superClass.list[k]) {
+                                const newChild = [];
+                                pushNode(newChild, 'extension', '@extend ' + superClass.name, null, null);                                pushNode(newChild, 'extension', '@extend ' + superClass.name, null, null);
+                                pushNode(tree, 'rule', selector, null, newChild.concat(childs));
+                                extendsSupperClass = true;
+                                break;
+                            }
+                        }
+
+                        if (extendsSupperClass) {
+                            break;
+                        }
+                    }
+
+                    if (!extendsSupperClass) {
+                        pushNode(tree, 'rule', selector, null, childs);
+                    }
                 }
             }
         }
 
-        print(tree, variables);
+        for (let i=0; i<superClasses.length; i++) {
+            const superClass = superClasses[i];
+            const selectors = superClass.list;
+            for (let j=0; j<selectors.length; j++) {
+                let selectorUndefined = true;
+                for (let k=0; k<tree.length; k++) {
+                    if (tree[k].type === 'rule' && selectors[j] === tree[k].name) {
+                        selectorUndefined = false;
+                        break;
+                    }
+                }
+
+                if (selectorUndefined) {
+                    const newChild = [];
+                    pushNode(newChild, 'extension', '@extend ' + superClass.name, null, null);
+                    pushNode(tree, 'rule', selectors[j], null, newChild);
+                }
+            }
+        }
+
+        print(tree, variables, superClasses);
     }
 }
 
@@ -144,9 +183,22 @@ function pushNode(tree, type, name, value, children) {
     tree.push(newNode);
 }
 
-function print(tree, variables) {
+function print(tree, variables, superClasses) {
     for (let i=0; i<variables.length; i++) {
         console.log(variables[i][0] + ' = ' + variables[i][1]);
+    }
+
+    for (let i=0; i<superClasses.length; i++) {
+        const superClass = superClasses[i];
+        console.log(superClass.name);
+        const childs = superClass.content;
+        for (let k=0; k<childs.length; k++) {
+            if (childs[k].type === 'comment') {
+                console.log('\t/* ' + childs[k].value + ' */');
+            } else {
+                console.log('\t' + childs[k].name + ': ' + childs[k].value);
+            }
+        }
     }
 
     for (let i=0; i<tree.length; i++) {
@@ -173,10 +225,45 @@ function print(tree, variables) {
                             }
                         }
                     } else {
-                        console.log('\t' + child.name + ': ' + child.value);
+                        if (child.type === 'extension') {
+                            console.log('\t' + child.name);
+                        } else {
+                            console.log('\t' + child.name + ': ' + child.value);
+                        }
                     }
                 }
             }
         }
     }
+}
+
+function generateSuperClasses(parsedCSS, variables) {
+    const nodes = parsedCSS.nodes;
+    const superClasses = [];
+    let index = 1;
+
+    for (let i=0; i<nodes.length; i++) {
+        const node = nodes[i];
+        if (node.type === 'rule') {
+            const selectors = node.selector.split(",");
+            if (selectors.length > 1) {
+                for (let j=0; j<selectors.length; j++) {
+                    selectors[j] = selectors[j].trim();
+                }
+
+                const childs = generateChildren(node.nodes, variables, nodes);
+
+                const superClass = {
+                    name: '%message-shared' + index,
+                    content: childs,
+                    list: selectors
+                };
+                superClasses.push(superClass);
+
+                index ++;
+            }
+        }
+    }
+
+    return superClasses;
 }
