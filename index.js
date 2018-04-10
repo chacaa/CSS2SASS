@@ -1,18 +1,14 @@
 const testFile = './test.css';
 const postcss = require('postcss');
-const fileManager = require('./utils/fileManager.js');
-const errorManager = require('./utils/errorManager.js');
+const fs = require('fs');
 const treeManager = require('./treeManager.js');
 
-var cssFile = fileManager.readFile(testFile);
-console.log("Archivo CSS:");
-console.log("============\n");
-console.log(cssFile);
-console.log("\n==================================================\n");
-console.log("Archivo SASS:")
-console.log("=============\n");
-var errorsDetected = errorManager.checkErrorsInCSSFile(testFile);
-if (!errorsDetected) {
-    var parsedCSS = postcss.parse(cssFile);
+try {
+    let cssFile = fs.readFileSync(testFile, 'utf8');
+    let parsedCSS = postcss.parse(cssFile);
     treeManager.generateSASSTree(parsedCSS, false);
+} catch (error) {
+    // if ( error.name === 'CssSyntaxError' ) {
+        console.log(error.toString());
+    // } 
 }

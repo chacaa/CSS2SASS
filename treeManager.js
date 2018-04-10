@@ -61,7 +61,7 @@ module.exports = {
                         for (let k=0; k<superClass.list.length; k++) {
                             if (nodes[i].selector === superClass.list[k]) {
                                 const newChild = [];
-                                pushNode(newChild, 'extension', '@extend ' + superClass.name, null, null);                                pushNode(newChild, 'extension', '@extend ' + superClass.name, null, null);
+                                pushNode(newChild, 'extension', '@extend ' + superClass.name, null, null);
                                 pushNode(tree, 'rule', selector, null, newChild.concat(childs));
                                 extendsSupperClass = true;
                                 break;
