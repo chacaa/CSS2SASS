@@ -1,5 +1,5 @@
 module.exports = {
-    generateSASSTree: function(parsedCSS, allValuesAsVariables) {
+    getSASSTree: function(parsedCSS, allValuesAsVariables) {
         const tree = [];
         const variables = generateVariables(parsedCSS, allValuesAsVariables);
         const superClasses = generateSuperClasses(parsedCSS, variables);
@@ -100,7 +100,13 @@ module.exports = {
             }
         }
 
-        print(tree, variables, superClasses);
+        return { 
+            variables, 
+            superClasses, 
+            tree, 
+            toString: toString(tree, variables, superClasses), 
+            error: null 
+        };
     }
 }
 
@@ -183,20 +189,22 @@ function pushNode(tree, type, name, value, children) {
     tree.push(newNode);
 }
 
-function print(tree, variables, superClasses) {
+function toString(tree, variables, superClasses) {
+    var sass = '';
+
     for (let i=0; i<variables.length; i++) {
-        console.log(variables[i][0] + ' = ' + variables[i][1]);
+        sass += variables[i][0] + ' = ' + variables[i][1] + '\n';
     }
 
     for (let i=0; i<superClasses.length; i++) {
         const superClass = superClasses[i];
-        console.log(superClass.name);
+        sass += superClass.name + '\n';
         const childs = superClass.content;
         for (let k=0; k<childs.length; k++) {
             if (childs[k].type === 'comment') {
-                console.log('\t/* ' + childs[k].value + ' */');
+                sass += '\t/* ' + childs[k].value + ' */\n';
             } else {
-                console.log('\t' + childs[k].name + ': ' + childs[k].value);
+                sass += '\t' + childs[k].name + ': ' + childs[k].value + '\n';
             }
         }
     }
@@ -204,37 +212,37 @@ function print(tree, variables, superClasses) {
     for (let i=0; i<tree.length; i++) {
         const node = tree[i];
         if (node.type === 'comment') {
-            console.log('/* ' + node.value + ' */');
+            sass += '/* ' + node.value + ' */\n';
         } else {
-            console.log(node.name);
+            sass += node.name + '\n';
             const children = node.children;
             for (let j=0; j<children.length; j++) {
                 const child = children[j];
                 if (child.type === 'comment') {
-                    console.log('\t/* ' + child.value + ' */');
+                    sass += '\t/* ' + child.value + ' */\n';
                 } else {
                     if (child.type === 'rule') {
-                        console.log('\t' + child.name);
-
+                        sass += '\t' + child.name + '\n';
                         const childs = child.children;
                         for (let k=0; k<childs.length; k++) {
                             if (childs[k].type === 'comment') {
-                                console.log('\t\t/* ' + childs[k].value + ' */');
+                                sass += '\t\t/* ' + childs[k].value + ' */\n';
                             } else {
-                                console.log('\t\t' + childs[k].name + ': ' + childs[k].value);
+                                sass += '\t\t' + childs[k].name + ': ' + childs[k].value + '\n';
                             }
                         }
                     } else {
                         if (child.type === 'extension') {
-                            console.log('\t' + child.name);
+                            sass += '\t' + child.name + '\n';
                         } else {
-                            console.log('\t' + child.name + ': ' + child.value);
+                            sass += '\t' + child.name + ': ' + child.value + '\n';
                         }
                     }
                 }
             }
         }
     }
+    return sass;
 }
 
 function generateSuperClasses(parsedCSS, variables) {
