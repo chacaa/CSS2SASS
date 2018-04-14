@@ -8,6 +8,11 @@ module.exports = {
         for (let i=0; i < nodes.length; i++) {
             if (nodes[i].type === 'comment') {
                 pushNode(tree, 'comment', null, nodes[i].text, null);
+            } else if (nodes[i].type == 'atrule') {
+                const attributes = nodes[i].nodes;
+                const childs = generateChildren(attributes, variables, nodes);
+                const name = '@' + nodes[i].name;
+                pushNode(tree, 'atrule', name, null, childs);
             } else {
                 const selector = nodes[i].selector;
                 const splitBySpace = selector.split(" ");
