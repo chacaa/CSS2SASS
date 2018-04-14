@@ -1,5 +1,5 @@
 {
-  "name": "css2sass",
+  "name": "unsass",
   "version": "1.0.0",
   "description": "css to sass converter",
   "main": "index.js",
@@ -10,16 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chacaa/CSS2SASS.git"
+    "url": "git+https://github.com/chacaa/unSASS.git"
   },
   "author": "chacaa",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chacaa/CSS2SASS/issues"
+    "url": "https://github.com/chacaa/unSASS/issues"
   },
-  "homepage": "https://github.com/chacaa/CSS2SASS#readme",
+  "homepage": "https://github.com/chacaa/unSASS#readme",
   "dependencies": {
-    "@rgrove/parse-xml": "^1.1.1",
     "postcss": "^6.0.18"
   },
   "devDependencies": {}
