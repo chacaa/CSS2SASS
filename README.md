@@ -1,6 +1,7 @@
 # unSASS
 unSASS is a npm package that allows you to transform your .css files in .sass files with the awesome SASS sintaxys.
 
+This is possible thanks to postcss and their amazing [library](https://github.com/postcss/postcss).
 
 ### Instalation
 In order to use unSASS in your proyect you need to run:
@@ -21,6 +22,19 @@ const file = './path-to-your-file';
 
 const sass = unsass.unSASS(file, allVariables);
 ```
+
+### Output value
+The unSASS function will return an js object with this structure:
+```
+{
+  variables: [list_of_variables],
+  superClasses: [list_of_superclasses],
+  tree: the_sass_tree,
+  toString: the_sass_tree_in_string_format,
+  error: error
+}
+```
+If there is an error all properties will be null except the error property.
 
 ### Example
 If the input is:
