@@ -198,7 +198,7 @@ function toString(tree, variables, superClasses) {
     var sass = '';
 
     for (let i=0; i<variables.length; i++) {
-        sass += variables[i][0] + ' = ' + variables[i][1] + '\n';
+        sass += variables[i][0] + ': ' + variables[i][1] + '\n';
     }
 
     for (let i=0; i<superClasses.length; i++) {
