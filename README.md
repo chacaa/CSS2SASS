@@ -12,12 +12,7 @@ npm install --save unsass
 ### Usage
 ```js
 const unsass = require('unsass');
-
-/* 
-  allVariables = true if you want all values as variables, 
-  if not use allVariables = false 
-*/
-const allVariables = true;
+const allVariables = false; // allVariables = true if you want all values as variables 
 const file = './path-to-your-file';
 
 const sass = unsass.unSASS(file, allVariables);
