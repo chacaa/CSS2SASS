@@ -7,7 +7,7 @@ module.exports = {
         try {
             let cssFile = fs.readFileSync(file, 'utf8');
             let parsedCSS = postcss.parse(cssFile);
-            return treeManager.getSASSTree(parsedCSS, false);
+            return treeManager.getSASSTree(parsedCSS, allVariables);
         } catch (error) {
             return { 
                 variables: null, 
