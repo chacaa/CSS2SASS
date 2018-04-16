@@ -53,7 +53,7 @@ module.exports = {
                         }
 
                         if (!alreadyDefined ) {
-                            pushNode(tree, 'rule', parentSelector, null, child);
+                            pushNode(tree, 'rule', parentSelector, null, [child]);
                         }
                     } 
                 } else {
