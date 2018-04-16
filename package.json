@@ -4,9 +4,8 @@
   "description": "css to sass converter",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index",
-    "pretest": "eslint --ignore-path .gitignore ."
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -19,6 +18,7 @@
   },
   "homepage": "https://github.com/chacaa/unSASS#readme",
   "dependencies": {
+    "mocha": "^5.1.0",
     "postcss": "^6.0.18"
   },
   "devDependencies": {}
