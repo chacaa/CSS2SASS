@@ -113,7 +113,7 @@ module.exports = {
             error: null 
         };
     }
-}
+};
 
 function generateChildren(attributes, variables, nodes) {
     const childs = [];
